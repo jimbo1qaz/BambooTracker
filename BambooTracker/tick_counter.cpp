@@ -47,6 +47,12 @@ void TickCounter::setTempo(int tempo)
 	updateTickDifference();
 	tickDiffSum_ = 0;
 	resetRest();
+
+	// If called while song is playing (usually in response to a Fxx event),
+	// subtract 1 so countUp() will remain on the row for (speed - 1) subsequent ticks.
+	if (isPlaySong_) {
+		restTickToNextStep_--;
+	}
 }
 
 int TickCounter::getTempo() const noexcept
@@ -60,6 +66,12 @@ void TickCounter::setSpeed(int speed)
 	updateTickDifference();
 	tickDiffSum_ = 0;
 	resetRest();
+
+	// If called while song is playing (usually in response to a Fxx event),
+	// subtract 1 so countUp() will remain on the row for (speed - 1) subsequent ticks.
+	if (isPlaySong_) {
+		restTickToNextStep_--;
+	}
 }
 
 int TickCounter::getSpeed() const noexcept
@@ -88,6 +100,11 @@ void TickCounter::setGrooveState(GrooveState state)
 	case GrooveState::Invalid:
 		nextGroovePos_ = -1;
 		resetRest();
+		// If called while song is playing (usually in response to a Fxx/Oxx event),
+		// subtract 1 so countUp() will remain on the row for (speed - 1) subsequent ticks.
+		if (isPlaySong_) {
+			restTickToNextStep_--;
+		}
 		break;
 	}
 }
